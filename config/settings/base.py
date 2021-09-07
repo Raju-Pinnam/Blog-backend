@@ -34,6 +34,7 @@ SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,13 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-    # local apps
-    'blog.apps.BlogConfig',
+
     # 3rd party apps
     'django_extensions',
-    'taggit',
-
-
+    # local apps
+    'blog.apps.BlogConfig',
 ]
 
 MIDDLEWARE = [

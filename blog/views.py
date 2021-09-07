@@ -4,18 +4,12 @@ from django.core.mail import send_mail
 from django.db.models import Count
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
-from taggit.models import Tag
-
 from .models import Post, Comment
 from .forms import EmailForm, CommentForm, SearchForm
 
 
-def post_list(request, tag_slug=None):
+def post_list(request):
     object_list = Post.published.all()
-    tag = None
-    if tag_slug:
-        tag = get_object_or_404(Tag, slug=tag_slug)
-        object_list = object_list.filter(tags__in=[tag])
     paginator = Paginator(object_list, 5)
     page = request.GET.get('page')
     try:
@@ -27,7 +21,6 @@ def post_list(request, tag_slug=None):
     context = {
         'posts': posts,
         'page': page,
-        'tag': tag,
     }
     return render(request, 'blog/post/list.html', context)
 
@@ -48,17 +41,11 @@ def post_detail(request, year, month, day, post_slug):
             new_comment.save()
     else:
         comment_form = CommentForm()
-    post_tags_ids = post.tags.values_list('id', flat=True)
-    similar_posts = Post.published.filter(
-        tags__in=post_tags_ids).exclude(id=post.id)
-    similar_posts = similar_posts.annotate(
-        same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4]
     context = {
         'post': post,
         'comments': comments,
         'new_comment': new_comment,
         'comment_form': comment_form,
-        'similar_posts': similar_posts,
     }
     return render(request, 'blog/post/detail.html', context)
 
